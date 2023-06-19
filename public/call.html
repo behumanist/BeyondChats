@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/call.css" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+    <div class="container" id="app">
+        <div class="main">
+            <div class="vid">
+                <video id="remoteVideo"
+                    src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" autoplay muted></video>
+                <div class="tags">
+                    <div class="pin cen" @click="isPinned(this)"><img src="./assets/svg/pin.svg" /></div>
+                    <div class="fs cen" @click="toggleFullScreen(this, this.parentElement.parentElement)"><img src="./assets/svg/fullscreen.svg" alt=""></div>
+                </div>
+            </div>
+            <div></div>
+        </div>
+        <div class="controls">
+            <div :class="{cen: true, whiteBg: permit.audio}" @click="permit.audio = !permit.audio" onclick="">
+                <svg width="24" height="24" fill="none" :stroke="permit.audio ? '#1a1919':'#edeeee'"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path v-if="permit.audio" d="M15 5a3 3 0 1 0-6 0v6a3 3 0 1 0 6 0V5Z"></path>
+                    <path v-if="!permit.audio" d="m3 3 18 18"></path>
+                    <path v-if="!permit.audio" d="M15 10.5V5a3 3 0 1 0-6 0v.5"></path>
+                    <path v-if="!permit.audio" d="M9 9a5 5 0 0 0 5 5"></path>
+                    <path d="M5 10v1a7 7 0 1 0 14 0v-1"></path>
+                    <path d="M12 22h3m-3-4v4-4Zm0 4H9h3Z"></path>
+                </svg>
+            </div>
+            <div :class="{cen: true, whiteBg: permit.video}" @click="permit.video = !permit.video">
+                <svg width="24" height="24" fill="none" :stroke="permit.video ? '#1a1919':'#edeeee'"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path v-if="permit.video"
+                        d="M15 12v4.4a.6.6 0 0 1-.6.6H3.6a.6.6 0 0 1-.6-.6V7.6a.6.6 0 0 1 .6-.6h10.8a.6.6 0 0 1 .6.6V12Zm0 0 5.016-4.18a.6.6 0 0 1 .984.461v7.438a.6.6 0 0 1-.984.46L15 12Z">
+                    </path>
+                    <path v-if="!permit.video"
+                        d="M11.5 7h2.9a.6.6 0 0 1 .6.6v3.119a.6.6 0 0 0 .984.46l4.032-3.359a.6.6 0 0 1 .984.461V15.5">
+                    </path>
+                    <path v-if="!permit.video"
+                        d="M6.5 7H3.6a.6.6 0 0 0-.6.6v8.8a.6.6 0 0 0 .6.6h10.8a.6.6 0 0 0 .6-.6V15L6.5 7Z"></path>
+                    <path v-if="!permit.video" d="m3 3 18 18"></path>
+                </svg>
+            </div>
+            <div :class="{cen: true, whiteBg: permit.screen}" @click="permit.screen = !permit.screen">
+                <svg width="24" height="24" fill="none" :stroke="permit.screen ? '#1a1919':'#edeeee'"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h9"></path>
+                    <path d="M7 20h10"></path>
+                    <path d="M9 16v4"></path>
+                    <path d="M15 16v4"></path>
+                    <path v-if="permit.screen" d="M17 4h4v4"></path>
+                    <path v-if="permit.screen" d="m16 9 5-5"></path>
+                    <path v-if="!permit.screen" d="m17 4 4 4m-4 0 4-4-4 4Z"></path>
+                </svg>
+
+            </div>
+            <div class="cen"><img src="./assets/svg/ellipse.svg" /></div>
+            <div class="cen end_call"><img src="./assets/svg/call.svg" /></div>
+        </div>
+    </div>
+</body>
+<script src="./js/call.js" type="module"></script>
+
+
+</html>

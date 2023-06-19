@@ -1,79 +1,335 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to FirebaseRTC</title>
-    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeyondChats</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/7.13.1/firebase-app.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/7.13.1/firebase-firestore.js"></script>
-    <!-- initialize the SDK after all desired features are loaded -->
-    <script defer src="/__/firebase/init.js"></script>
-
-    <link rel="stylesheet" type="text/css" href="main.css">
 </head>
-<body>
-<h1>Welcome to FirebaseRTC!</h1>
-<div id="buttons">
-    <button class="mdc-button mdc-button--raised" id="cameraBtn">
-        <i class="material-icons mdc-button__icon" aria-hidden="true">perm_camera_mic</i>
-        <span class="mdc-button__label">Open camera & microphone</span>
-    </button>
-    <button class="mdc-button mdc-button--raised" disabled id="createBtn">
-        <i class="material-icons mdc-button__icon" aria-hidden="true">group_add</i>
-        <span class="mdc-button__label">Create room</span>
-    </button>
-    <button class="mdc-button mdc-button--raised" disabled id="joinBtn">
-        <i class="material-icons mdc-button__icon" aria-hidden="true">group</i>
-        <span class="mdc-button__label">Join room</span>
-    </button>
-    <button class="mdc-button mdc-button--raised" disabled id="hangupBtn">
-        <i class="material-icons mdc-button__icon" aria-hidden="true">close</i>
-        <span class="mdc-button__label">Hangup</span>
-    </button>
-</div>
-<div>
-    <span id="currentRoom"></span>
-</div>
-<div id="videos">
-    <video id="localVideo" muted autoplay playsinline></video>
-    <video id="remoteVideo" autoplay playsinline></video>
-</div>
-<div class="mdc-dialog"
-     id="room-dialog"
-     role="alertdialog"
-     aria-modal="true"
-     aria-labelledby="my-dialog-title"
-     aria-describedby="my-dialog-content">
-    <div class="mdc-dialog__container">
-        <div class="mdc-dialog__surface">
-            <h2 class="mdc-dialog__title" id="my-dialog-title">Join room</h2>
-            <div class="mdc-dialog__content" id="my-dialog-content">
-                Enter ID for room to join:
-                <div class="mdc-text-field">
-                    <input type="text" id="room-id" class="mdc-text-field__input">
-                    <label class="mdc-floating-label" for="my-text-field">Room ID</label>
-                    <div class="mdc-line-ripple"></div>
+
+<body id="app">
+    <nav class="">
+        <a href="/" class="logo">
+            <svg width="50" height="50" viewBox="0 0 641 614" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="641" height="495" rx="103" fill="#45b15c" />
+                <rect x="107" y="119" width="427" height="257" rx="103" fill="#212324" fill-opacity="0.960784" />
+                <circle cx="215.5" cy="247.5" r="42.5" fill="#82b08c" />
+                <circle cx="415.5" cy="247.5" r="42.5" fill="#82b08c" />
+                <path d="M478.501 492.742L585.423 474.324L429.013 613.241L478.501 492.742Z" fill="#82b08c"
+                    fill-opacity="0.960784" />
+            </svg>
+        </a>
+        <ul class="tablist">
+            <li @click="tab='chats'">
+                <svg width="25" height="25" :fill="activeTab('chats') ? '#f0f0f0':'#aeafb1'" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M3 5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5Zm6 0H5v4h4V5Zm4 0a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V5Zm6 0h-4v4h4V5ZM3 15a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4Zm6 0H5v4h4v-4Zm4 0a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4Zm6 0h-4v4h4v-4Z"
+                        clip-rule="evenodd"></path>
+                </svg>
+            </li>
+
+            <li @click="tab='groups'">
+                <svg width="25" height="25" fill="none" :stroke="activeTab('groups') ? '#f0f0f0':'#aeafb1'"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M5.782 19.25h7.436c.565 0 1.009-.468.896-1.021C13.804 16.7 12.79 14 9.5 14s-4.304 2.701-4.615 4.229c-.112.553.332 1.021.897 1.021Z">
+                    </path>
+                    <path d="M15.75 14c2.079 0 2.93 2.148 3.274 3.696.185.836-.49 1.554-1.347 1.554h-.927"></path>
+                    <path d="M9.5 4.75a2.75 2.75 0 1 0 0 5.5 2.75 2.75 0 1 0 0-5.5z"></path>
+                    <path d="M14.75 10.25c1.519 0 2.5-1.231 2.5-2.75s-.981-2.75-2.5-2.75"></path>
+                </svg>
+            </li>
+            <li @click="tab='calls'">
+                <svg width="26" height="26" fill="none" :stroke="activeTab('calls') ? '#f0f0f0':'#aeafb1'"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M8.893 4.75H6.068c-.728 0-1.318.59-1.318 1.318 0 7.28 5.902 13.182 13.182 13.182.728 0 1.318-.59 1.318-1.318v-2.825l-3.107-2.071-1.611 1.61c-.28.28-.698.368-1.05.186a11.093 11.093 0 0 1-2.518-1.796 8.726 8.726 0 0 1-1.836-2.542c-.16-.34-.067-.733.199-1l1.637-1.637L8.893 4.75Z">
+                    </path>
+                    <path d="M14 5.03a7.264 7.264 0 0 1 5 5.076"></path>
+                </svg>
+            </li>
+            <li @click="tab='bookmarks'">
+                <svg width="26" height="26" fill="none" :stroke="activeTab('bookmarks') ? '#f0f0f0':'#aeafb1'"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6.75 6.75a2 2 0 0 1 2-2h6.5a2 2 0 0 1 2 2v12.5L12 14.75l-5.25 4.5V6.75Z"></path>
+                </svg>
+            </li>
+            <li @click="tab='profile'" v-if="dimensions.width < 800">
+                <svg width="26" height="26" fill="none" :stroke="activeTab('profile') ? '#f0f0f0':'#aeafb1'"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4.75a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 1 0 0-6.5z"></path>
+                    <path
+                        d="M6.848 19.25h10.305c1.141 0 2.021-.982 1.488-1.992C17.856 15.773 16.068 14 12 14s-5.856 1.773-6.64 3.258c-.534 1.01.346 1.992 1.487 1.992Z">
+                    </path>
+                </svg>
+            </li>
+        </ul>
+        <span class="profile-tab flexr" @click="tab='profile'">
+            <svg width="29" height="29" fill="none" :stroke="activeTab('profile') ? '#f0f0f0':'#aeafb1'"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4.75a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 1 0 0-6.5z"></path>
+                <path
+                    d="M6.848 19.25h10.305c1.141 0 2.021-.982 1.488-1.992C17.856 15.773 16.068 14 12 14s-5.856 1.773-6.64 3.258c-.534 1.01.346 1.992 1.487 1.992Z">
+                </path>
+            </svg>
+        </span>
+    </nav>
+    <div id="main">
+        <section v-if="subtab == 'tabs' || dimensions.width > 800">
+            <div class="tab chats" v-if="activeTab('chats')">hola</div>
+            <div class="tab groups" v-if="activeTab('groups')"></div>
+            <div class="tab calls" v-if="activeTab('calls')"></div>
+            <div class="tab bookmarks" v-if="activeTab('bookmarks')"></div>
+            <div class="tab profile" v-if="activeTab('profile')">
+                <div class="profile_pic">
+                    <img src="./assets/avatars/emoji.png" alt="" srcset="">
+                </div>
+                <span class="username">Jaiprakash Mishra</span>
+                <span class="userid">Jaimishra04</span>
+                <span class="status">Online</span>
+                <div class="action">
+                    <div class="audio">
+                        <svg width="24" height="24" fill="none" stroke="#45b15c" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M8.893 4.75H6.068c-.728 0-1.318.59-1.318 1.318 0 7.28 5.902 13.182 13.182 13.182.728 0 1.318-.59 1.318-1.318v-2.825l-3.107-2.071-1.611 1.61c-.28.28-.698.368-1.05.186a11.093 11.093 0 0 1-2.518-1.796 8.726 8.726 0 0 1-1.836-2.542c-.16-.34-.067-.733.199-1l1.637-1.637L8.893 4.75Z">
+                            </path>
+                            <path d="m19.25 4.75-4.5 4.5"></path>
+                            <path d="M19.25 8.25v-3.5h-3.5"></path>
+                        </svg>
+                    </div>
+                    <div class="video">
+                        <svg width="24" height="24" fill="none" stroke="#45b15c" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M8.138 17h6.207c.914 0 1.655-.853 1.655-1.905v-6.19C16 7.853 15.259 7 14.345 7h-8.69C4.741 7 4 7.853 4 8.905v6.19C4 16.147 4.741 17 5.655 17h2.483Z">
+                            </path>
+                            <path d="M16 10.207 20 8v8l-4-2.207"></path>
+                        </svg>
+                    </div>
+                    <div class="search">
+                        <svg width="24" height="24" fill="none" stroke="#45b15c" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19.25 19.25 15.5 15.5M4.75 11a6.25 6.25 0 1 1 12.5 0 6.25 6.25 0 0 1-12.5 0Z">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="shared">
+                    <div class="share_tablist">
+                        <span class="active_SharedTab">Photos</span><span>Links</span><span>Docs</span>
+                    </div>
+                    <div class="shared_tab images cen">
+                        No Image shared :)
+                    </div>
                 </div>
             </div>
-            <footer class="mdc-dialog__actions">
-                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="no">
-                    <span class="mdc-button__label">Cancel</span>
-                </button>
-                <button id="confirmJoinBtn" type="button" class="mdc-button mdc-dialog__button"
-                        data-mdc-dialog-action="yes">
-                    <span class="mdc-button__label">Join</span>
-                </button>
-            </footer>
-        </div>
+        </section>
+        <main v-if="subtab == 'chat' || dimensions.width > 800" class="cen">
+            <header>
+                <div class="userplt">
+                    <img src="./assets/avatars/emoji.png" alt="">
+                    <span class="name">Jaiprakash Mishra</span>
+                </div>
+                <div class="utils">
+                    <div class="call cen" v-if="dimensions.width > 800">
+                        <svg width="22" height="22" fill="none" stroke="#aeafb1" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M8.893 4.75H6.068c-.728 0-1.318.59-1.318 1.318 0 7.28 5.902 13.182 13.182 13.182.728 0 1.318-.59 1.318-1.318v-2.825l-3.107-2.071-1.611 1.61c-.28.28-.698.368-1.05.186a11.093 11.093 0 0 1-2.518-1.796 8.726 8.726 0 0 1-1.836-2.542c-.16-.34-.067-.733.199-1l1.637-1.637L8.893 4.75Z">
+                            </path>
+                            <path d="m19.25 4.75-4.5 4.5"></path>
+                            <path d="M19.25 8.25v-3.5h-3.5"></path>
+                        </svg>
+                    </div>
+                    <div class="call cen" v-if="dimensions.width > 800">
+                        <svg width="22" height="22" fill="none" stroke="#aeafb1" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M8.138 17h6.207c.914 0 1.655-.853 1.655-1.905v-6.19C16 7.853 15.259 7 14.345 7h-8.69C4.741 7 4 7.853 4 8.905v6.19C4 16.147 4.741 17 5.655 17h2.483Z">
+                            </path>
+                            <path d="M16 10.207 20 8v8l-4-2.207"></path>
+                        </svg>
+                    </div>
+                    <div class="more cen">
+                        <svg v-if="dimensions.width < 800" width="36" height="36" fill="#aeafb1" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
+                            <path d="M13 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
+                            <path d="M13 16a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
+                        </svg>
+                        <svg v-else width="24" height="24" fill="none" stroke="#aeafb1" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="m17.25 6.75-10.5 10.5"></path>
+                            <path d="m6.75 6.75 10.5 10.5"></path>
+                        </svg>
+                    </div>
+                </div>
+
+
+            </header>
+            <div class="msgs">
+                <div class="sticky"> {{ audioChunks }}</div>
+                <div class="maps remote">
+                    <svg width="50" height="70" fill="#c9c9c9" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M7.25 10a4.75 4.75 0 1 1 9.5 0 4.75 4.75 0 0 1-9.5 0ZM12 6.75a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5Z"
+                            clip-rule="evenodd"></path>
+                        <path fill-rule="evenodd"
+                            d="M3.524 8.857a8.288 8.288 0 0 1 8.26-7.607h.432a8.288 8.288 0 0 1 8.26 7.607 8.944 8.944 0 0 1-1.99 6.396l-4.793 5.861a2.187 2.187 0 0 1-3.386 0l-4.793-5.861a8.943 8.943 0 0 1-1.99-6.396Zm8.26-6.107A6.788 6.788 0 0 0 5.02 8.98a7.443 7.443 0 0 0 1.656 5.323l4.793 5.862a.687.687 0 0 0 1.064 0l4.793-5.862A7.443 7.443 0 0 0 18.98 8.98a6.788 6.788 0 0 0-6.765-6.23h-.432Z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="content">
+                        Latitude: 28.6261248<br />
+                        Longitude: 77.0637824
+                    </span>
+                    <a target="_blank" href="https://maps.google.com/maps?q=28.6261248,77.0637824">Open Maps</a>
+                    <span class="time">11:55</span>
+                </div>
+                <div class="poll">
+                    <span class="content">This is a poll</span>
+                    <span class="option ">Option 1 hdshdsdjsdnjsndjswndjn
+                        dbdbbdbedddkmkdnejdnjendjendjendjeqnjdnqjddendjeqn</span>
+                    <span class="option opted">Option 1</span>
+                    <span class="option">Option 1</span>
+                    <span class="option">Option 1</span>
+                    <span class="time">11:55</span>
+                    <div class="poll_results">
+                        <span class="option ">Option 1 hdshdsdjsdnjsndjswndjn
+                            dbdbbdbedddkmkdnejdnjendjendjendjeqnjdnqjddendjeqn</span>
+                        <span class="option opted">Option 1</span>
+                        <span class="option">Option 1</span>
+                        <span class="option">Option 1</span>
+                    </div>
+                </div>
+                <div class="msg"><span class="content">{{msg.val}}</span><span class="time">{{ getTime(msg.ts) }}</span>
+                </div>
+
+                <div class="audio"><span class="content">
+                    <div class="audioplayer">
+                        <audio controls id=recordedAudio></audio>
+                        <div v-if="" class="toggleplay cen">
+                            <svg width="28" height="28" fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6.906 4.538A.6.6 0 0 0 6 5.054v13.894a.6.6 0 0 0 .906.516l11.723-6.947a.6.6 0 0 0 0-1.032L6.906 4.538Z"></path>
+                            </svg>
+                        </div>
+                        <div v-else class="toggleplay cen">
+                            <svg width="46" height="46" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17.276 5.47c.435.16.724.575.724 1.039V17.49c0 .464-.29.879-.724 1.039a3.69 3.69 0 0 1-2.552 0A1.107 1.107 0 0 1 14 17.491V6.51c0-.464.29-.879.724-1.04a3.69 3.69 0 0 1 2.552 0Z"></path>
+                                <path d="M9.276 5.47c.435.16.724.575.724 1.039V17.49c0 .464-.29.879-.724 1.039a3.69 3.69 0 0 1-2.552 0A1.107 1.107 0 0 1 6 17.491V6.51c0-.464.29-.879.724-1.04a3.69 3.69 0 0 1 2.552 0Z"></path>
+                              </svg>
+                        </div>
+                        <div class="wave">
+
+                        </div>
+                        <div class="elapsed_time"></div>
+                    </div>
+                    </span><span class="time">{{getTime(msg.ts)}}</span>
+                </div>
+
+
+            </div>
+            <chatbar class="">
+                <input class="cur_msg" type="text" placeholder="Type message......" v-model="cur_msg">
+                <div class="attach cen" onclick='document.getElementById("add").classList.toggle("activeAdd");'>
+                    <svg width="18" height="18" fill="none" stroke="#aeafb1" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48">
+                        </path>
+                    </svg>
+                </div>
+                <div v-if="cur_msg.length > 0" class="send cen">
+                    <svg width="26" height="26" fill="#fff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M21.243 12.437a.5.5 0 0 0 0-.874l-2.282-1.268A75.497 75.497 0 0 0 4.813 4.231l-.665-.208A.5.5 0 0 0 3.5 4.5v5.75a.5.5 0 0 0 .474.5l1.01.053a44.41 44.41 0 0 1 7.314.998l.238.053c.053.011.076.033.089.05a.163.163 0 0 1 .029.096c0 .04-.013.074-.029.096-.013.017-.036.039-.089.05l-.238.053a44.509 44.509 0 0 1-7.315.999l-1.01.053a.5.5 0 0 0-.473.499v5.75a.5.5 0 0 0 .65.477l.664-.208a75.499 75.499 0 0 0 14.146-6.064l2.283-1.268Z">
+                        </path>
+                    </svg>
+                </div>
+                <div v-else class="send cen" id=sendBtn :onmousedown="startRecord()">
+                    <svg width="24" height="24" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 5a3 3 0 1 0-6 0v6a3 3 0 1 0 6 0V5Z"></path>
+                        <path d="M5 10v1a7 7 0 1 0 14 0v-1"></path>
+                        <path d="M12 22h3m-3-4v4-4Zm0 4H9h3Z"></path>
+                    </svg>
+                </div>
+                <div class="add" id="add">
+                    <span class="gallery cen"><input type="file" name="" id="">
+                        <svg width="30" height="30" fill="#aeafb1" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14 9a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z"></path>
+                            <path fill-rule="evenodd"
+                                d="M7.268 4.658a54.646 54.646 0 0 1 9.465 0l1.51.132a3.138 3.138 0 0 1 2.831 2.66 30.597 30.597 0 0 1 0 9.1 3.138 3.138 0 0 1-2.831 2.66l-1.51.131a54.634 54.634 0 0 1-9.465 0l-1.51-.131a3.138 3.138 0 0 1-2.832-2.66 30.601 30.601 0 0 1 0-9.1 3.138 3.138 0 0 1 2.831-2.66l1.51-.132Zm9.335 1.495a53.146 53.146 0 0 0-9.206 0l-1.51.131A1.638 1.638 0 0 0 4.41 7.672a29.101 29.101 0 0 0-.311 5.17L7.97 8.97a.75.75 0 0 1 1.09.032l3.672 4.13 2.53-.844a.75.75 0 0 1 .796.21l3.519 3.91.014-.08a29.101 29.101 0 0 0 0-8.656 1.638 1.638 0 0 0-1.478-1.388l-1.51-.131Zm2.017 11.435-3.349-3.721-2.534.844a.75.75 0 0 1-.797-.213l-3.472-3.905-4.244 4.243c.049.498.11.996.185 1.491a1.638 1.638 0 0 0 1.478 1.389l1.51.131c3.063.266 6.143.266 9.206 0l1.51-.131c.179-.016.35-.06.507-.128Z"
+                                clip-rule="evenodd"></path>
+                        </svg></span>
+                    <span class="location cen">
+                        <svg width="30" height="30" fill="#aeafb1" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M8.25 9a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM12 6.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z"
+                                clip-rule="evenodd"></path>
+                            <path fill-rule="evenodd"
+                                d="M5.456 8.127a6.403 6.403 0 0 1 6.382-5.877h.324a6.403 6.403 0 0 1 6.382 5.877 6.895 6.895 0 0 1-1.534 4.931l-3.595 4.396a1.828 1.828 0 0 1-2.83 0L6.99 13.058a6.895 6.895 0 0 1-1.534-4.93Zm6.382-4.377a4.903 4.903 0 0 0-4.887 4.5 5.395 5.395 0 0 0 1.2 3.859l3.595 4.396c.131.16.377.16.508 0l3.595-4.396a5.395 5.395 0 0 0 1.2-3.859 4.903 4.903 0 0 0-4.887-4.5h-.324Z"
+                                clip-rule="evenodd"></path>
+                            <path
+                                d="M7.67 16.335a.75.75 0 1 0-1.34-.67l-2 4A.75.75 0 0 0 5 20.75h14a.75.75 0 0 0 .67-1.085l-2-4a.75.75 0 1 0-1.34.67l1.457 2.915H6.213l1.457-2.915Z">
+                            </path>
+                        </svg>
+                    </span>
+                    <span class="contacts cen">
+                        <svg width="30" height="30" fill="#aeafb1" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 9a2 2 0 1 1 4 0 2 2 0 0 1-4 0Z"></path>
+                            <path d="M11 12.5a3 3 0 0 0-3 3 1 1 0 0 0 1 1h6a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-2Z"></path>
+                            <path fill-rule="evenodd"
+                                d="M7.543 2.883a31.331 31.331 0 0 1 8.913 0 3.196 3.196 0 0 1 2.73 2.874l.126 1.396c.293 3.225.293 6.47 0 9.694l-.127 1.396a3.197 3.197 0 0 1-2.729 2.874 31.334 31.334 0 0 1-8.913 0 3.197 3.197 0 0 1-2.728-2.874l-.127-1.396a53.504 53.504 0 0 1 0-9.694l.127-1.396a3.197 3.197 0 0 1 2.728-2.874Zm8.7 1.484a29.832 29.832 0 0 0-8.486 0 1.697 1.697 0 0 0-1.448 1.526l-.127 1.396a52.003 52.003 0 0 0 0 9.422l.127 1.396c.07.783.67 1.414 1.448 1.526a29.86 29.86 0 0 0 8.486 0 1.696 1.696 0 0 0 1.448-1.526l.127-1.396a52.009 52.009 0 0 0 0-9.422l-.127-1.396a1.697 1.697 0 0 0-1.448-1.526Z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </span>
+                    <span class="polls cen">
+                        <svg width="24" height="24" fill="#aeafb1" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.5 6H12v1.5h10.5V6Z"></path>
+                            <path d="M22.5 16.5H12V18h10.5v-1.5Z"></path>
+                            <path
+                                d="M7.5 10.5H3A1.502 1.502 0 0 1 1.5 9V4.5A1.502 1.502 0 0 1 3 3h4.5A1.502 1.502 0 0 1 9 4.5V9a1.502 1.502 0 0 1-1.5 1.5ZM3 4.5V9h4.5V4.5H3Z">
+                            </path>
+                            <path
+                                d="M7.5 21H3a1.502 1.502 0 0 1-1.5-1.5V15A1.502 1.502 0 0 1 3 13.5h4.5A1.502 1.502 0 0 1 9 15v4.5A1.502 1.502 0 0 1 7.5 21ZM3 15v4.5h4.5V15H3Z">
+                            </path>
+                        </svg>
+                    </span>
+
+
+                </div>
+            </chatbar>
+        </main>
+
     </div>
-    <div class="mdc-dialog__scrim"></div>
-</div>
-<script src="app.js"></script>
 </body>
+
+<script src="./js/index.js" type="module"></script>
+
+<script id="rendered-js">
+
+</script>
+
 </html>
