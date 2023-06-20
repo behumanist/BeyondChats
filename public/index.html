@@ -25,7 +25,7 @@
             </svg>
         </a>
         <ul class="tablist">
-            <li @click="tab='chats'">
+            <li @click="active.tab='chats'">
                 
                 <svg width="25" height="25" :stroke="activeTab('chats') ? '#f0f0f0':'#aeafb1'" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path fill="#e3e3e3" d="M17 12.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1Z"></path>
@@ -35,19 +35,7 @@
                     </svg>
             </li>
 
-            <li @click="tab='groups'">
-                <svg width="25" height="25" fill="none" :stroke="activeTab('groups') ? '#f0f0f0':'#aeafb1'"
-                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M5.782 19.25h7.436c.565 0 1.009-.468.896-1.021C13.804 16.7 12.79 14 9.5 14s-4.304 2.701-4.615 4.229c-.112.553.332 1.021.897 1.021Z">
-                    </path>
-                    <path d="M15.75 14c2.079 0 2.93 2.148 3.274 3.696.185.836-.49 1.554-1.347 1.554h-.927"></path>
-                    <path d="M9.5 4.75a2.75 2.75 0 1 0 0 5.5 2.75 2.75 0 1 0 0-5.5z"></path>
-                    <path d="M14.75 10.25c1.519 0 2.5-1.231 2.5-2.75s-.981-2.75-2.5-2.75"></path>
-                </svg>
-            </li>
-            <li @click="tab='calls'">
+            <li @click="active.tab='calls'">
                 <svg width="26" height="26" fill="none" :stroke="activeTab('calls') ? '#f0f0f0':'#aeafb1'"
                     stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
@@ -57,14 +45,14 @@
                     <path d="M14 5.03a7.264 7.264 0 0 1 5 5.076"></path>
                 </svg>
             </li>
-            <li @click="tab='bookmarks'">
+            <li @click="active.tab='bookmarks'">
                 <svg width="26" height="26" fill="none" :stroke="activeTab('bookmarks') ? '#f0f0f0':'#aeafb1'"
                     stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path d="M6.75 6.75a2 2 0 0 1 2-2h6.5a2 2 0 0 1 2 2v12.5L12 14.75l-5.25 4.5V6.75Z"></path>
                 </svg>
             </li>
-            <li @click="tab='profile'" v-if="dimensions.width < 800">
+            <li @click="active.tab='profile'" v-if="dimensions.width < 800">
                 <svg width="26" height="26" fill="none" :stroke="activeTab('profile') ? '#f0f0f0':'#aeafb1'"
                     stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
@@ -75,7 +63,7 @@
                 </svg>
             </li>
         </ul>
-        <span class="profile-tab flexr" @click="tab='profile'">
+        <span class="profile-tab flexr" @click="active.tab='profile'">
             <svg width="29" height="29" fill="none" :stroke="activeTab('profile') ? '#f0f0f0':'#aeafb1'"
                 stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg">
@@ -87,9 +75,12 @@
         </span>
     </nav>
     <div id="main">
-        <section v-if="subtab == 'tabs' || dimensions.width > 800">
-            <div class="tab chats" v-if="activeTab('chats')">hola</div>
-            <div class="tab groups" v-if="activeTab('groups')"></div>
+        <section v-if="active.subtab == 'tabs' || dimensions.width > 800">
+            <div class="tab chats" v-if="activeTab('chats')">
+                <div class="pagetitle">
+                    Chats
+                </div>
+            </div>
             <div class="tab calls" v-if="activeTab('calls')"></div>
             <div class="tab bookmarks" v-if="activeTab('bookmarks')"></div>
             <div class="tab profile" v-if="activeTab('profile')">
@@ -143,7 +134,7 @@
                 </div>
             </div>
         </section>
-        <main v-if="subtab == 'chat' || dimensions.width > 800" class="cen">
+        <main v-if="active.subtab == 'chat' || dimensions.width > 800" class="cen">
             <header>
                 <div class="userplt">
                     <svg width="24" height="24" fill="none" stroke="#e3e3e3" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -189,13 +180,15 @@
                         </svg>
                     </div>
                 </div>
-
-
             </header>
             <div class="msgs">
-                <div class="sticky"> {{ audioChunks }}</div>
-                <div class="maps remote">
-                    <svg width="50" height="70" fill="#c9c9c9" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <div v-for="msg in msgs" :class="[msg.type, ]">
+                    <span v-if="msg.type == 'sticky'">{{ getTime(msg.ts) }}</span>
+
+                    <!-- Normal -->
+                    <span  v-if="msg.val" class="content">{{msg.val}}</span>
+                    <!-- Maps -->
+                    <svg v-if="msg.type == 'maps'" width="50" height="70" fill="#c9c9c9" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd"
                             d="M7.25 10a4.75 4.75 0 1 1 9.5 0 4.75 4.75 0 0 1-9.5 0ZM12 6.75a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5Z"
                             clip-rule="evenodd"></path>
@@ -203,32 +196,18 @@
                             d="M3.524 8.857a8.288 8.288 0 0 1 8.26-7.607h.432a8.288 8.288 0 0 1 8.26 7.607 8.944 8.944 0 0 1-1.99 6.396l-4.793 5.861a2.187 2.187 0 0 1-3.386 0l-4.793-5.861a8.943 8.943 0 0 1-1.99-6.396Zm8.26-6.107A6.788 6.788 0 0 0 5.02 8.98a7.443 7.443 0 0 0 1.656 5.323l4.793 5.862a.687.687 0 0 0 1.064 0l4.793-5.862A7.443 7.443 0 0 0 18.98 8.98a6.788 6.788 0 0 0-6.765-6.23h-.432Z"
                             clip-rule="evenodd"></path>
                     </svg>
-                    <span class="content">
-                        Latitude: 28.6261248<br />
-                        Longitude: 77.0637824
-                    </span>
-                    <a target="_blank" href="https://maps.google.com/maps?q=28.6261248,77.0637824">Open Maps</a>
-                    <span class="time">{{ getTime(1684561248000) }}</span>
-                </div>
-                <div class="poll">
-                    <span class="content">This is a poll</span>
-                    <span class="option ">Option 1 hdshdsdjsdnjsndjswndjn
-                        dbdbbdbedddkmkdnejdnjendjendjendjeqnjdnqjddendjeqn</span>
-                    <span class="option opted">Option 1</span>
-                    <span class="option">Option 1</span>
-                    <span class="option">Option 1</span>
-                    <span class="time">{{ getTime(1684561248000) }}</span>
-                    <div class="poll_results">
-                        <span class="option ">Option 1 hdshdsdjsdnjsndjswndjn
-                            dbdbbdbedddkmkdnejdnjendjendjendjeqnjdnqjddendjeqn</span>
-                        <span class="option opted">Option 1</span>
-                        <span class="option">Option 1</span>
-                        <span class="option">Option 1</span>
-                    </div>
-                </div>
-                <div class="msg"><span class="content">{{msg.val}}</span><span class="time">{{ getTime(msg.ts) }}</span>
+                    <span class="content" v-if="msg.type == 'maps'"> Latitude: {{ msg.latitude }}<br />Longitude: {{ msg.longitude}}</span>
+                    <a target="_blank" v-if="msg.type == 'maps'" href="https://maps.google.com/maps?q=28.6261248,77.0637824">Open Maps</a>
+                    <!-- Poll -->
+                    <span v-if="msg.type == 'poll'" v-for="option in msg.options" class="option">{{ option.val }}</span>
+                    <span v-if="msg.type != 'sticky'" class="time">{{ getTime(msg.ts) }}</span>
+
                 </div>
 
+                <!-- 
+                <div class="poll">
+                    <span class="content">This is a poll</span>
+                </div>
                 <div class="audio"><span class="content">
                     <div class="audioplayer">
                         <audio controls id=recordedAudio></audio>
@@ -244,13 +223,11 @@
                               </svg>
                         </div>
                         <div class="wave">
-
                         </div>
                         <div class="elapsed_time"></div>
                     </div>
                     </span><span class="time">{{getTime(msg.ts)}}</span>
-                </div>
-
+                </div> -->
 
             </div>
             <chatbar class="">

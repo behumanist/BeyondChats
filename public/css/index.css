@@ -114,7 +114,7 @@ nav>ul {
 }
 
 nav>ul>li {
-    margin: 10px;
+    margin: 20px;
     cursor: pointer;
 }
 
@@ -278,7 +278,7 @@ div.utils>div {
     width: 100%;
     height: calc(100vh - 125px);
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     padding-bottom: 10px;
     overflow-y: scroll;
 }
@@ -296,13 +296,13 @@ div.utils>div {
     background-color: #212324;
     font-size: 14px;
     position: relative;
-    margin: 5px;
+    margin: 3px;
     word-wrap: break-word;
     justify-content: space-between;
 }
 
 .poll {
-    min-width: 200px;
+    min-width: 300px;
 }
 
 .msg:not(.remote), .audio:not(.remote),
@@ -315,7 +315,7 @@ div.maps:not(.remote) {
 .msg>.time,
 .poll>.time,
 .maps>.time, .audio>.time {
-    margin: 5px 0 -2px 0;
+    margin: 3px 0 -2px 0;
     font-size: 10px;
     text-align: right;
 }
@@ -349,15 +349,30 @@ div.maps:not(.remote) {
 }
 
 .maps {
+    padding-top: 5px;
     width: 250px;
-    height: 250px;
+    height: 390px;
+}
+
+.sticky {
+    display: flex;
+    position: sticky;
+    align-self: center;
+    width: fit-content;
+    min-width: 100px;
+    align-items: center;
+    justify-content: center;
+    padding: 7px;
+    font-size: 12px;
+    border-radius: 10px;
+    background-color: #212324e0;
+    bottom: 0;
 }
 
 .maps>svg {
     align-self: center;
     -webkit-animation: jello-vertical 1s ease-in both;
     animation: jello-vertical 1s ease-in both;
-
 }
 
 .maps>a {
@@ -367,7 +382,6 @@ div.maps:not(.remote) {
     justify-content: center;
     height: 40px;
     width: 100%;
-    margin-top: 5px;
 }
 
 .maps>a:hover {
