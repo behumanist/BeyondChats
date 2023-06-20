@@ -6,6 +6,7 @@ createApp({
       tab: 'profile',
       subtab: 'chat',
       cur_msg: "",
+      active: {profile_tab: "images", },
       msg: { val: "This is Jaiprakash Mishra", ts: 1685970103000 },
       dimensions: { width: window.innerWidth, height: window.innerHeight },
       stamp: 'WednesDay',
@@ -33,12 +34,11 @@ createApp({
       let d = new Date(x);
       let h = d.getHours();
 
-      function amPm(h) {
-        if (h > 12) { return [(24 - h), " pm"] }
-        return [h, 'am'];
-      }
-      let time = amPm(h)[0] + ":" + d.getMinutes() + amPm(h)[1];
-      return time
+      let hour = h > 12 ? 24 - h : h;
+      let mer = h > 12 ? " p.m." : " a.m.";
+
+      let time = hour + ":" + d.getMinutes() + mer;
+      return time;
 
     },
     activeTab(x) {
@@ -47,7 +47,6 @@ createApp({
     },
 
     startRecord() {
-            
       navigator.mediaDevices.getUserMedia({ audio: true }).
           then(stream => {
               audioChunks = [];
@@ -61,7 +60,6 @@ createApp({
                       sendData(blob);
                   }
               };
-
               rec.start();
               sendBtn.onmouseup = e => { rec.stop() };
           });

@@ -26,12 +26,13 @@
         </a>
         <ul class="tablist">
             <li @click="tab='chats'">
-                <svg width="25" height="25" :fill="activeTab('chats') ? '#f0f0f0':'#aeafb1'" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd"
-                        d="M3 5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5Zm6 0H5v4h4V5Zm4 0a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V5Zm6 0h-4v4h4V5ZM3 15a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4Zm6 0H5v4h4v-4Zm4 0a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4Zm6 0h-4v4h4v-4Z"
-                        clip-rule="evenodd"></path>
-                </svg>
+                
+                <svg width="25" height="25" :stroke="activeTab('chats') ? '#f0f0f0':'#aeafb1'" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#e3e3e3" d="M17 12.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1Z"></path>
+                    <path fill="#e3e3e3" d="M12 12.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1Z"></path>
+                    <path fill="#e3e3e3" d="M7 12.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1Z"></path>
+                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12c0 1.821.487 3.53 1.338 5L2.5 21.5l4.5-.838A9.955 9.955 0 0 0 12 22Z"></path>
+                    </svg>
             </li>
 
             <li @click="tab='groups'">
@@ -99,15 +100,14 @@
                 <span class="userid">Jaimishra04</span>
                 <span class="status">Online</span>
                 <div class="action">
-                    <div class="audio">
+                    <div class="video">
                         <svg width="24" height="24" fill="none" stroke="#45b15c" stroke-linecap="round"
                             stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
-                                d="M8.893 4.75H6.068c-.728 0-1.318.59-1.318 1.318 0 7.28 5.902 13.182 13.182 13.182.728 0 1.318-.59 1.318-1.318v-2.825l-3.107-2.071-1.611 1.61c-.28.28-.698.368-1.05.186a11.093 11.093 0 0 1-2.518-1.796 8.726 8.726 0 0 1-1.836-2.542c-.16-.34-.067-.733.199-1l1.637-1.637L8.893 4.75Z">
+                                d="M8.138 17h6.207c.914 0 1.655-.853 1.655-1.905v-6.19C16 7.853 15.259 7 14.345 7h-8.69C4.741 7 4 7.853 4 8.905v6.19C4 16.147 4.741 17 5.655 17h2.483Z">
                             </path>
-                            <path d="m19.25 4.75-4.5 4.5"></path>
-                            <path d="M19.25 8.25v-3.5h-3.5"></path>
+                            <path d="M16 10.207 20 8v8l-4-2.207"></path>
                         </svg>
                     </div>
                     <div class="video">
@@ -131,10 +131,14 @@
                 </div>
                 <div class="shared">
                     <div class="share_tablist">
-                        <span class="active_SharedTab">Photos</span><span>Links</span><span>Docs</span>
+                        <span :class="{active_SharedTab : active.profile_tab == 'images'}" @click="active.profile_tab = 'images'">Photos</span>
+                        <span :class="{active_SharedTab : active.profile_tab == 'links'}" @click="active.profile_tab = 'links'">Links</span>
                     </div>
-                    <div class="shared_tab images cen">
-                        No Image shared :)
+                    <div v-if="active.profile_tab == 'images'" class="shared_tab images cen">
+                        No image shared :)
+                    </div>
+                    <div v-if="active.profile_tab == 'links'"  class="shared_tab links cen">
+                        No links shared :)
                     </div>
                 </div>
             </div>
@@ -142,6 +146,9 @@
         <main v-if="subtab == 'chat' || dimensions.width > 800" class="cen">
             <header>
                 <div class="userplt">
+                    <svg width="24" height="24" fill="none" stroke="#e3e3e3" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="m15 6-6 6 6 6"></path>
+                    </svg>
                     <img src="./assets/avatars/emoji.png" alt="">
                     <span class="name">Jaiprakash Mishra</span>
                 </div>
@@ -201,7 +208,7 @@
                         Longitude: 77.0637824
                     </span>
                     <a target="_blank" href="https://maps.google.com/maps?q=28.6261248,77.0637824">Open Maps</a>
-                    <span class="time">11:55</span>
+                    <span class="time">{{ getTime(1684561248000) }}</span>
                 </div>
                 <div class="poll">
                     <span class="content">This is a poll</span>
@@ -210,7 +217,7 @@
                     <span class="option opted">Option 1</span>
                     <span class="option">Option 1</span>
                     <span class="option">Option 1</span>
-                    <span class="time">11:55</span>
+                    <span class="time">{{ getTime(1684561248000) }}</span>
                     <div class="poll_results">
                         <span class="option ">Option 1 hdshdsdjsdnjsndjswndjn
                             dbdbbdbedddkmkdnejdnjendjendjendjeqnjdnqjddendjeqn</span>
